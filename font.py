@@ -18,40 +18,45 @@
 import sys, argparse
 import pickle
 
-def loadfont(infile):
-    with open(infile, 'r') as f:
-        character_dict = dict()
-        for line in f:
-            if len(line) < 2: break
-            row = []
-            key = None
-            tuple = line.rstrip().split(',')
-            for element in tuple:
-                if (tuple.index(element) == 0 and key == None):
-                    key = chr(int(element))
-                else:
-                    this_row = []
-                    for col_counter in range(len(element)):
-                            this_bit = True if element[col_counter] == '1' else False
-                            this_row.append(this_bit)
-                    row.append(this_row)
-            character_dict[key] = [row,list(zip(*row))]
-    return character_dict
+class Font:
 
-def savefont(character_dict, outfile):
-    pickle.dump(character_dict, open(outfile, 'wb'))
-    return
+    def parse_font(infile):
+        with open(infile, 'r') as f:
+            character_dict = dict()
+            for line in f:
+                if len(line) < 2: break
+                row = []
+                key = None
+                tuple = line.rstrip().split(',')
+                for element in tuple:
+                    if (tuple.index(element) == 0 and key == None):
+                        key = chr(int(element))
+                    else:
+                        this_row = []
+                        for col_counter in range(len(element)):
+                                this_bit = True if element[col_counter] == '1' else False
+                                this_row.append(this_bit)
+                        row.append(this_row)
+                character_dict[key] = [row,list(zip(*row))]
+        return character_dict
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--infile", help="infile")
-    parser.add_argument("-o", "--outfile", help="outfile")
-    args = parser.parse_args()
+    def save_font(character_dict, outfile):
+        pickle.dump(character_dict, open(outfile, 'wb'))
+        return
 
-    if not (args.infile and args.outfile):
-        raise ValueError("missing parameters, use -h for help")
+    def load_font(font_file):
+        return pickle.load( open(font_file, 'rb') )
 
-    savefont(loadfont(args.infile), args.outfile)
+    if __name__ == '__main__':
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-i", "--infile", help="infile")
+        parser.add_argument("-o", "--outfile", help="outfile")
+        args = parser.parse_args()
+
+        if not (args.infile and args.outfile):
+            raise ValueError("missing parameters, use -h for help")
+
+        save_font(parse_font(args.infile), args.outfile)
 
 
 
