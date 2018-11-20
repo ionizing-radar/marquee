@@ -20,7 +20,7 @@ import pickle
 
 class Font:
 
-    def parse_font(infile):
+    def parse_font(self, infile):
         with open(infile, 'r') as f:
             character_dict = dict()
             for line in f:
@@ -40,11 +40,11 @@ class Font:
                 character_dict[key] = [row,list(zip(*row))]
         return character_dict
 
-    def save_font(character_dict, outfile):
+    def save_font(self, character_dict, outfile):
         pickle.dump(character_dict, open(outfile, 'wb'))
         return
 
-    def load_font(font_file):
+    def load_font(self, font_file):
         return pickle.load( open(font_file, 'rb') )
 
     if __name__ == '__main__':
