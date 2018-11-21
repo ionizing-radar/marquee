@@ -1,5 +1,20 @@
 # marquee
 
+scroll.py
+
+loads a binary font file, scrolls text across the display/jumper
+
+
+
+font.py
+
+loads a font from text file, saves it as bespoke binary file.  The text file should take the form of:
+
+a 000 110 110
+
+where the first column is a character to index, the next columns each represent a row of pixels from top to bottom. white space must be included, and each line should be the same length (because there's no error checking here, so bad input may break something else later on)
+
+
 
 jumper-thumb font
 
