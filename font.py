@@ -20,6 +20,12 @@ import pickle
 
 class Font:
 
+    ROW = 0
+    COLUMN = 1
+
+    CHARACTER_BY_ROWS = 0
+    CHARACTER_BY_COLS = 1
+
     def parse_font(self, infile):
         with open(infile, 'r') as f:
             character_dict = dict()

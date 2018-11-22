@@ -7,9 +7,11 @@ import sys, threading, time
 
 DEFAULT_FONT='jumper-thumb.font'    # kinda the only font, but hey maybe later i'll do wingdings or something
 MARQUEE_SIZE=[5,59]                 # because that's the jumper 5 pixels high and 59 wide
+MARQUEE_ROWS=0                      # index for getting the number of rows in the marquee
+MARQUEE_COLS=1                      # index for getting the number of cols in the marquee
 KEMING=1                            # space between letters
 
-RANDOM_TEXT=['all your base are belong to us', 'no ragrets', 'is thing on?', '1.21 gigawatts? 1.21 GIGAWATTS!? Great Scott!']
+RANDOM_TEXT=['all your base are belong to us', 'no ragrets', '1.21 gigawatts? 1.21 GIGAWATTS!? Great Scott!']
 ROLL_DELAY = 0.125                  # wait this many seconds to scroll the text
 
 DEBUGGING = 1                       # verbose things, for bedugging. Bigger numbers means more verbosity
@@ -17,28 +19,38 @@ CONSOLE_OUTPUT = True               # output scroll text to console
 
 class Scroll:
 
-    self.marquee_size = MARQUEE_SIZE
-    self.keming_characters = 0          # number of blank spaces to append to the text
-    self.font_width = 3                 # pixel width of characters in the font
-    self.font_height = 5                # pixel height of characters in the font
-    self.keming = KEMING                # pixel space between letters
+    marquee_size = MARQUEE_SIZE
+    keming_characters = 0          # number of blank spaces to append to the text
+    font_width = 3                 # pixel width of characters in the font
+    font_height = 5                # pixel height of characters in the font
+    keming = KEMING                # pixel space between letters
 
     def __init__(self):
         self.marquee_size = MARQUEE_SIZE
         self.font = self.set_font(DEFAULT_FONT)
         self.text = self.set_text(Scroll.get_random_text())
+       
         print(self.text)
 
     def set_text(self, new_text):
         if new_text == None: new_text = get_random_text()
         self.text = new_text
+        marquee_character_width = int(self.marquee_size[MARQUEE_COLS]/self.font_width)  # how many characters fit in the marquee
+        if len(self.text) > marquee_character_width:
+            padding = ' '*5
+        else: 
+            padding = '  '
+        self.text = self.text + padding
         return self.text
 
     # this one has to be in the form: [ character, [row bitmap], [column bit map] ]
     def set_font(self, font_file):
+        # get the font
         f = Font()
         font = f.load_font(font_file)
-        
+        self.font_width = len(font['i'][Font.CHARACTER_BY_ROWS][Font.ROW])
+        self.font_height = len(font['i'][Font.CHARACTER_BY_ROWS])
+
         return font
 
     # rotate the text, with a delay, ie: scrolls the text to the right at a set speed
