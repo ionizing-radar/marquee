@@ -20,16 +20,19 @@ CONSOLE_OUTPUT = True               # output scroll text to console
 class Scroll:
 
     marquee_size = MARQUEE_SIZE
-    keming_characters = 0          # number of blank spaces to append to the text
-    font_width = 3                 # pixel width of characters in the font
-    font_height = 5                # pixel height of characters in the font
-    keming = KEMING                # pixel space between letters
+    keming_characters = 0                       # number of blank spaces to append to the text
+    font_width = 3                              # pixel width of characters in the font
+    font_height = 5                             # pixel height of characters in the font
+    keming = KEMING                             # pixel space between letters
+    keming_col = [[False]*font_height]*keming   # keming turned into spaces between letters when displayed
+ 
 
     def __init__(self):
         self.marquee_size = MARQUEE_SIZE
         self.font = self.set_font(DEFAULT_FONT)
         self.text = self.set_text(Scroll.get_random_text())
-       
+        self.keming_col = [[False]*self.font_height]*self.keming
+ 
         print(self.text)
 
     def set_text(self, new_text):
@@ -61,9 +64,25 @@ class Scroll:
         self.roll_text()
         
     def marquee_to_console(self):
-        if DEBUGGING: print(self.text)
+        if DEBUGGING > 1: print(self.text)
+        display = []
         if CONSOLE_OUTPUT:
-            noop = True
+            for letter in self.text:
+                if len(display) >= MARQUEE_SIZE[MARQUEE_COLS]: break
+                for col in self.font[letter][MARQUEE_COLS]:
+                    display = display + [col]
+                display = display + self.keming_col
+            while len(display) > MARQUEE_SIZE[MARQUEE_COLS]:
+                del display[-1]
+
+        for col in display:
+            this_col = ''
+            for bit in col:
+                this_bit = chr(48) if bit else chr(32)
+                this_col = this_col + this_bit
+            this_col = this_col[::-1]
+            print(this_col)
+
 
         time.sleep(ROLL_DELAY)
         self.marquee_to_console()
@@ -71,6 +90,7 @@ class Scroll:
 
     def get_random_text ():
         return random.choice(RANDOM_TEXT)
+
 
 
 if __name__ == '__main__':
